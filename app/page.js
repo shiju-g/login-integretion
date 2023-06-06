@@ -39,7 +39,7 @@ export default function Home() {
         // Store the access token in local storage or state
         const accessToken = data.accessToken;
         // Redirect to the dashboard page
-        // window.location.href = "/dashboard";
+        window.location.href = "/dashboard";
         console.log(accessToken);
       } else {
         const errorData = await response.json();
