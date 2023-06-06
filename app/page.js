@@ -39,6 +39,7 @@ export default function Home() {
         // Store the access token in local storage or state
         const accessToken = data.accessToken;
         // Redirect to the dashboard page
+        alert("login succenssfull");
         window.location.href = "/dashboard";
         console.log(accessToken);
       } else {
@@ -47,6 +48,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Login failed", error);
+      alert("login failed");
     }
   };
 
