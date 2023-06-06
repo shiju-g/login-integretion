@@ -1,4 +1,55 @@
+"use client";
+
+import { useState } from "react";
+import axios from "axios";
+
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (e.target.email.value !== "") {
+      setEmail(e.target.email.value);
+    }
+    if (e.target.password.value != "") {
+      setPassword(e.target.password.value);
+    }
+
+    if (password == "" || email == "") {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://textile.torcdeveloper.com/api/v1/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(response);
+        // Store the access token in local storage or state
+        const accessToken = data.accessToken;
+        // Redirect to the dashboard page
+        // window.location.href = "/dashboard";
+        console.log(accessToken);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message);
+      }
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
   return (
     <>
       <div className="w-full xl:px-20 sm:px-10  h-full flex lg:flex-row flex-col min-h-screen items-center   justify-center   bg-[#f8f8f8]">
@@ -8,14 +59,15 @@ export default function Home() {
             Does't have account?{" "}
             <span className="font-bold text-purple-700">Sign Up</span>
           </p>
-          <form action="">
+          <form onSubmit={submitHandler} method="post" action="">
             <div className="mt-5">
               <label className="block font-semibold" htmlFor="">
                 Email Address
               </label>
               <input
-                className="p-3 w-full rounded-lg border-2 border-gray-400"
+                className="p-3 w-full n rounded-lg border-2 border-gray-400"
                 type="email"
+                name="email"
                 placeholder="you@example.com"
               />
             </div>
@@ -24,6 +76,7 @@ export default function Home() {
                 Password
               </label>
               <input
+                name="password"
                 className="p-3 w-full rounded-lg border-2 border-gray-400"
                 type="password"
                 placeholder="Enter 6 character or more"
