@@ -2,12 +2,19 @@
 
 import { useState } from "react";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const verifyToken = Cookies.get("token");
+  if (verifyToken) {
+    router.push("/dashboard");
+  }
 
   const submitHandler = async (e) => {
     e.preventDefault();
