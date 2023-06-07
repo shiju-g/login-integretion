@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -22,6 +23,7 @@ export default function Home() {
     }
 
     try {
+      setLoading(true);
       const response = await fetch(
         "https://textile.torcdeveloper.com/api/v1/login",
         {
@@ -34,14 +36,18 @@ export default function Home() {
       );
 
       if (response.ok) {
+        setLoading(false);
         const data = await response.json();
-        console.log(response);
         // Store the access token in local storage or state
-        const accessToken = data.accessToken;
+        const accessToken = data?.token;
+        const userDetails = data?.user;
+        Cookies.set("token", accessToken);
+        var serializedObject = JSON.stringify(userDetails);
+        Cookies.set("user", serializedObject);
+
         // Redirect to the dashboard page
         alert("login succenssfull");
         window.location.href = "/dashboard";
-        console.log(accessToken);
       } else {
         const errorData = await response.json();
         setError(errorData.message);
@@ -91,10 +97,10 @@ export default function Home() {
               </label>
             </div>
             <button
-              className="mt-8 bg-indigo-500 text-lg hover:bg-indigo-700 font-medium py-3 w-full rounded-xl text-white"
               type="submit"
+              className="mt-8 bg-indigo-500 text-lg hover:bg-indigo-700 font-medium py-3 w-full rounded-xl text-white"
             >
-              LOGIN
+              {loading ? "Loading..." : "LOGIN"}
             </button>
             <div className="text-center text-gray-400 mt-5 relative">
               <div className="w-full h-0.5 bg-gray-400"></div>
